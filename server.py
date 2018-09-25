@@ -1,10 +1,12 @@
 from flask import Flask
-from mongoengine import connect
 from apis.user import user_apis
-
+from flask_mongoengine import MongoEngine
 
 app = Flask(__name__)
-connect('bot_framework')
+app.config['MONGODB_SETTINGS'] = {
+    'db': 'bot_framework'
+}
+db = MongoEngine(app)
 app.register_blueprint(user_apis, url_prefix='/v1/user/')
 
 @app.route('/')
