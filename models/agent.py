@@ -6,3 +6,4 @@ class Agent(Document):
     description = StringField()
     # TODO: add user
     # user = ObjectIdField()
+    webhook = StringField()
