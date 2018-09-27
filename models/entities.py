@@ -8,5 +8,6 @@ class EntityEntry(EmbeddedDocument):
 
 class Entities(Document):
     name = StringField(required=True)
+    description = StringField()
     entries = EmbeddedDocumentListField(EntityEntry(), required=True)
     agent_id = ObjectIdField(required=True)
