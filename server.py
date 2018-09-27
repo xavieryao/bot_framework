@@ -7,7 +7,7 @@ app.config['MONGODB_SETTINGS'] = {
     'db': 'bot_framework'
 }
 db = MongoEngine(app)
-app.register_blueprint(entities_apis, url_prefix='/v1/user/')
+app.register_blueprint(entities_apis, url_prefix='/v1/entities/')
 
 @app.route('/')
 def hello_world():
