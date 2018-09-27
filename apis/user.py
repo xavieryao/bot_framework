@@ -1,5 +1,5 @@
 from flask import Blueprint
-from models.user import User
+from models.entities import User
 
 user_apis = Blueprint('user_apis', __name__)
 
