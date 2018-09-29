@@ -1,5 +1,5 @@
 from flask import Flask
-from apis.entities import entities_apis
+from apis.entity import entity_apis
 from flask_mongoengine import MongoEngine
 
 app = Flask(__name__)
@@ -7,7 +7,7 @@ app.config['MONGODB_SETTINGS'] = {
     'db': 'bot_framework'
 }
 db = MongoEngine(app)
-app.register_blueprint(entities_apis, url_prefix='/v1/entities/')
+app.register_blueprint(entity_apis, url_prefix='/v1/entity/')
 
 @app.route('/')
 def hello_world():
