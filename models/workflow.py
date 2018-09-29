@@ -2,6 +2,7 @@ from mongoengine import Document, EmbeddedDocument
 from mongoengine import LazyReferenceField, StringField, ListField, BooleanField, IntField
 from .entity import Entity
 from .agent import Agent
+from .intent import Intent
 
 class Context(EmbeddedDocument):
     name = StringField(required=True)
@@ -16,6 +17,7 @@ class Parameter(EmbeddedDocument):
 
 class Workflow(Document):
     agent = LazyReferenceField(Agent, required=True)
+    intent = LazyReferenceField(Intent, required=True)
     name = StringField(required=True)
     input_context = ListField(Context())
     output_context = ListField(Context())
