@@ -13,7 +13,6 @@ tags:
 - name: "agent"
   description: ""
 - name: "entity"
-  description: "Operations about user"
 - name: "intent"
 - name: "workflow"
 schemes:
@@ -467,7 +466,7 @@ paths:
   /agent/{agent_id}/intent/{intent_id}:
     get:
       tags:
-      - "entity"
+      - "intent"
       summary: "Return the Intent with given id"
       description: "Return the Intent with given id"
       operationId: "getIntent"
@@ -621,7 +620,7 @@ paths:
   /agent/{agent_id}/workflow/{workflow_id}:
     get:
       tags:
-      - "entity"
+      - "workflow"
       summary: "Return the Workflow with given id"
       description: "Return the Workflow with given id"
       operationId: "getWorkflow"
