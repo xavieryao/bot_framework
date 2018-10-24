@@ -1,0 +1,998 @@
+swagger: "2.0"
+info:
+  description: "Bot framkework API specification"
+  version: "1.0.0"
+  title: "AMiner Bot Framework"
+  contact:
+    email: "ypr15@mails.tsinghua.edu.cn"
+host: "api.example.com"
+basePath: "/v1"
+tags:
+- name: "user"
+  description: ""
+- name: "agent"
+  description: ""
+- name: "entity"
+  description: "Operations about user"
+- name: "intent"
+- name: "workflow"
+schemes:
+- "https"
+- "http"
+paths:
+  /agent:
+    post:
+      tags:
+      - "agent"
+      summary: "Add a new agent"
+      description: ""
+      operationId: "addAgent"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Agent object that needs to be added"
+        required: true
+        schema:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+              example: "my bot"
+            web_hook:
+              type: "string"
+              example: "http://example.com/bot_callback"
+              
+      responses:
+        400:
+          description: "Invalid input"
+          schema:
+            $ref: "#/definitions/ApiErrorResponse"
+        200:
+          description: "Ok"
+      security:
+      - api_key: []
+    get:
+      tags:
+      - "agent"
+      summary: "Finds all Agent of the current user"
+      operationId: "findAgents"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Agent"
+        400:
+          description: "Invalid status value"
+          schema:
+            $ref: "#/definitions/ApiErrorResponse"
+      security:
+      - api_key: []
+  /agent/{agent_id}:
+    put:
+      tags:
+      - "agent"
+      summary: "Update an existing agent"
+      description: ""
+      operationId: "updateAgent"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "ID of agent to return"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Agent object that needs to be updated. No field is required."
+        required: true
+        schema:
+          $ref: "#/definitions/Agent"
+      responses:
+        200:
+          description: "Ok"
+        400:
+          description: "Error"
+          schema:
+            $ref: "#/definitions/ApiErrorResponse"
+      security:
+      - api_key: []
+    get:
+      tags:
+      - "agent"
+      summary: "Find agent by ID"
+      description: "Returns a single agent"
+      operationId: "getAgentById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "ID of agent to return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Agent"
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'
+      security:
+      - api_key: []
+    delete:
+      tags:
+      - "agent"
+      summary: "Deletes an agnet"
+      description: ""
+      operationId: "deleteAgent"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id to delete"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Agent"
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'
+      security:
+      - api_key: []
+
+  /agent/{agent_id}/entity:
+    get:
+      tags:
+      - "entity"
+      summary: "Returns all entity types"
+      description: "Returns all entity types of this agent"
+      operationId: "getEntityTypes"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+        
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/EntityType"
+            
+      security:
+      - api_key: []
+    post:
+      tags:
+      - "entity"
+      summary: "Create new entity types"
+      description: "Create a new entity type for an agent"
+      operationId: "createNewEntity"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Entity object that needs to be updated."
+        required: true
+        schema:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+            description:
+              type: "string"
+            entries:
+              type: "array"
+              items:
+                $ref: '#/definitions/EntityEntry'
+        
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/EntityType"
+            
+      security:
+      - api_key: []
+  /agent/{agent_id}/entity/{entity_id}:
+    get:
+      tags:
+      - "entity"
+      summary: "Return the EntityType with given id"
+      description: "Return the EntityType with given id"
+      operationId: "getEntityType"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - name: "entity_id"
+        in: "path"
+        description: "EntityType id"
+        required: true
+        type: "string"
+        
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/EntityType"
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'
+            
+      security:
+      - api_key: []
+    put:
+      tags:
+      - "entity"
+      summary: "Update the EntityType with given id"
+      description: "Update the EntityType with given id, no field is required."
+      operationId: "updateEntityType"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - name: "entity_id"
+        in: "path"
+        description: "EntityType id"
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        description: "EntityType object to be updated"
+        required: true
+        schema:
+          $ref: '#/definitions/EntityType'
+        
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'            
+      security:
+      - api_key: []
+    delete:
+      tags:
+      - "entity"
+      summary: "Deletes the EntityType with given id"
+      description: "Deletes the EntityType with given id"
+      operationId: "deleteEntityType"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - name: "entity_id"
+        in: "path"
+        description: "EntityType id"
+        required: true
+        type: "string"
+        
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'            
+      security:
+      - api_key: []
+  /agent/{agent_id}/entity/{entity_id}/addEntry:
+    post:
+      tags:
+      - "entity"
+      summary: "Add an entry to the EntityType"
+      description: "Add an entry to the EntityType"
+      operationId: "addEntry"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - name: "entity_id"
+        in: "path"
+        description: "EntityType id"
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        description: "EntityEntry"
+        required: true
+        schema:
+          $ref: '#/definitions/EntityEntry'
+        
+      responses:
+        200:
+          description: "successful operation"
+
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'
+            
+      security:
+      - api_key: []
+  /agent/{agent_id}/entity/{entity_id}/uploadEntryList:
+    post:
+      tags:
+      - "entity"
+      summary: "uploads a list of entries"
+      description: ""
+      operationId: "uploadEntryList"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - name: "entity_id"
+        in: "path"
+        description: "EntityType id"
+        required: true
+        type: "string"
+      - name: "file"
+        in: "formData"
+        description: "file to upload"
+        required: false
+        type: "file"
+      responses:
+        200:
+          description: "successful operation"
+
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'
+      security:
+      - api_key: []
+  /agent/{agent_id}/intent:
+    get:
+      tags:
+      - "intent"
+      summary: "Returns all intents"
+      description: "Returns all intents of this agent"
+      operationId: "getIntents"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+        
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Intent"
+            
+      security:
+      - api_key: []
+    post:
+      tags:
+      - "intent"
+      summary: "Create new intent"
+      description: "Create a new intent for an agent"
+      operationId: "createNewIntent"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Intent object that needs to be created."
+        required: true
+        schema:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+            description:
+              type: "string"
+            tree:
+              type: "object"
+        
+      responses:
+        200:
+          description: "successful operation"
+            
+      security:
+      - api_key: []
+  /agent/{agent_id}/intent/{intent_id}:
+    get:
+      tags:
+      - "entity"
+      summary: "Return the Intent with given id"
+      description: "Return the Intent with given id"
+      operationId: "getIntent"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - name: "intent_id"
+        in: "path"
+        description: "Intent id"
+        required: true
+        type: "string"
+        
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Intent"
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'
+            
+      security:
+      - api_key: []
+    put:
+      tags:
+      - "intent"
+      summary: "Update the Intent with given id"
+      description: "Update the Intent with given id, no field is required."
+      operationId: "updateIntent"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - name: "intent_id"
+        in: "path"
+        description: "Intent id"
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        description: "Intent object to be updated"
+        required: true
+        schema:
+          $ref: '#/definitions/Intent'
+        
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'            
+      security:
+      - api_key: []
+    delete:
+      tags:
+      - "intent"
+      summary: "Deletes the Intent with given id"
+      description: "Deletes the Intent with given id"
+      operationId: "deleteIntent"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - name: "intent_id"
+        in: "path"
+        description: "Intent id"
+        required: true
+        type: "string"
+        
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'            
+      security:
+      - api_key: []
+  /agent/{agent_id}/workflow:
+    get:
+      tags:
+      - "workflow"
+      summary: "Returns all workflows"
+      description: "Returns all workflows of this agent"
+      operationId: "getWorkflows"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+        
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Workflow"
+            
+      security:
+      - api_key: []
+    post:
+      tags:
+      - "workflow"
+      summary: "Create new workflow"
+      description: "Create a new workflow for an agent"
+      operationId: "createNewWorkflow"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Workflow object that needs to be created. All id fields are ignored."
+        required: true
+        schema:
+          $ref: "#/definitions/Workflow"
+        
+      responses:
+        200:
+          description: "successful operation"
+            
+      security:
+      - api_key: []
+  /agent/{agent_id}/workflow/{workflow_id}:
+    get:
+      tags:
+      - "entity"
+      summary: "Return the Workflow with given id"
+      description: "Return the Workflow with given id"
+      operationId: "getWorkflow"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - name: "workflow_id"
+        in: "path"
+        description: "Workflow id"
+        required: true
+        type: "string"
+        
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Workflow"
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'
+            
+      security:
+      - api_key: []
+    put:
+      tags:
+      - "workflow"
+      summary: "Update the Workflow with given id"
+      description: "Update the Workflow with given id, no field is required."
+      operationId: "updateWorkflow"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - name: "workflow_id"
+        in: "path"
+        description: "Workflow id"
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        description: "Workflow object to be updated, all id fields are ignored."
+        required: true
+        schema:
+          $ref: '#/definitions/Workflow'
+        
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'            
+      security:
+      - api_key: []
+    delete:
+      tags:
+      - "workflow"
+      summary: "Deletes the Workflow with given id"
+      description: "Deletes the Workflow with given id"
+      operationId: "deleteWorkflow"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "agent_id"
+        in: "path"
+        description: "Agent id"
+        required: true
+        type: "string"
+      - name: "workflow_id"
+        in: "path"
+        description: "Workflow id"
+        required: true
+        type: "string"
+        
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Client error"
+          schema:
+            $ref: '#/definitions/ApiErrorResponse'            
+      security:
+      - api_key: []
+  
+  /user:
+    post:
+      tags:
+      - "user"
+      summary: "Create user"
+      description: "This can only be done by the logged in user."
+      operationId: "createUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        default:
+          description: "successful operation"
+  /user/login:
+    get:
+      tags:
+      - "user"
+      summary: "Logs user into the system"
+      description: ""
+      operationId: "loginUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "query"
+        description: "The user name for login"
+        required: true
+        type: "string"
+      - name: "password"
+        in: "query"
+        description: "The password for login in clear text"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            properties:
+              api_key:
+                type: "string"
+              rate_limit:
+                type: "integer"
+                format: "int32"
+                description: "calls per hour allowed by the user"
+              expires_after:
+                type: "string"
+                format: "date-time"
+                description: "date in UTC when token expires"
+        400:
+          description: "Invalid username/password supplied"
+  /user/logout:
+    get:
+      tags:
+      - "user"
+      summary: "Logs out current logged in user session"
+      description: ""
+      operationId: "logoutUser"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        default:
+          description: "successful operation"
+  /user/{username}:
+    get:
+      tags:
+      - "user"
+      summary: "Get user by user name"
+      description: ""
+      operationId: "getUserByName"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "The name that needs to be fetched. Use user1 for testing. "
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid username supplied"
+        404:
+          description: "User not found"
+    put:
+      tags:
+      - "user"
+      summary: "Updated user"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "name that need to be updated"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        400:
+          description: "Invalid user supplied"
+        404:
+          description: "User not found"
+    delete:
+      tags:
+      - "user"
+      summary: "Delete user"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteUser"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        description: "The name that needs to be deleted"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid username supplied"
+        404:
+          description: "User not found"
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "query"
+definitions:
+
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      username:
+        type: "string"
+      password:
+        type: "string"
+      display_name:
+        type: "string"
+      
+  Agent:
+    type: "object"
+    required: 
+      - id
+    properties:
+      id:
+        type: "string"
+      user_id:
+        type: "string"
+      name:
+        type: "string"
+      description:
+        type: "string"
+      webhook:
+        type: "string"
+  
+  EntityEntry:
+    type: "object"
+    properties:
+      reference_value:
+        type: "string"
+      alias:
+        type: "array"
+        items:
+          type: "string"
+  
+  EntityType:
+    type: "object"
+    properties:
+      agent_id:
+        type: "string"
+      name:
+        type: "string"
+      description:
+        type: "string"
+      entries:
+        type: "array"
+        items:
+          $ref: "#/definitions/EntityEntry"
+  
+  Intent:
+    type: "object"
+    properties:
+      agent_id:
+        type: "string"
+      name:
+        type: "string"
+      description:
+        type: "string"
+      tree:
+        type: "object"
+  
+  Context:
+    type: "object"
+    properties:
+      name: 
+        type: "string"
+      turns_to_expire:
+        type: "integer"
+  
+  Parameter:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      required:
+        type: "boolean"
+      entity_type_id:
+        type: "string"
+      prompts:
+        type: "array"
+        items:
+          type: "string"
+      call_webhook:
+        type: "boolean"
+  
+  Workflow:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      agent_id:
+        type: "string"
+      intent_id:
+        type: "string"
+      name:
+        type: "string"
+      description:
+        type: "string"
+      input_context:
+        type: "array"
+        items:
+          $ref: "#/definitions/Context"
+      output_context:
+        type: "array"
+        items:
+          $ref: "#/definitions/Context"
+      parameters:
+        type: "array"
+        items:
+          $ref: "#/definitions/Parameter"
+      end_of_conversation:
+        type: "boolean"
+      responses:
+        type: "array"
+        items:
+          type: "string"
+      call_webhook:
+        type: "boolean"
+  
+  ApiErrorResponse:
+    type: "object"
+    properties:
+      type:
+        type: "string"
+      message:
+        type: "string"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
