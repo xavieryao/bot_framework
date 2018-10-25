@@ -13,17 +13,17 @@ class Parameter(EmbeddedDocument):
     required = BooleanField(required=True, default=True)
     entity = LazyReferenceField(Entity, required=True)
     # TODO: is_list
-    prompts = ListField(StringField(), required=True) # TODO default
+    prompts = ListField(StringField(), required=True)
+    enable_webhook = BooleanField(required=True, default=False)
 
 class Workflow(Document):
     agent = LazyReferenceField(Agent, required=True)
     intent = LazyReferenceField(Intent, required=True)
     name = StringField(required=True)
+    description = StringField(default="")
     input_context = ListField(Context())
     output_context = ListField(Context())
-    # TODO: reference to intent
     parameters = ListField(Parameter())
     end_of_conversation = BooleanField(required=True, default=False)
     responses = ListField(StringField())
     enable_webhook = BooleanField(required=True, default=False)
-    enable_slot_filling_webhook = BooleanField(required=True, default=False)
