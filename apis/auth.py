@@ -13,6 +13,7 @@ def verify_api_key():
     except DoesNotExist:
         return api_error('authentication', 'The api_key is not valid. It might be expired.'), 403
     g.user_session = session
+    g.user = g.user_session.user
 
 def auth_required(func):
     @wraps(func)

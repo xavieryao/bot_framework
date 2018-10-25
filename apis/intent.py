@@ -2,6 +2,7 @@ from flask import Blueprint, request, g, jsonify
 from models.user import User
 from models.agent import Agent
 from models.intent import Intent
+from .auth import auth_required
 
 intent_apis = Blueprint('intent_apis', __name__)
 
@@ -10,12 +11,8 @@ def get_agent(_, values):
     g.agent_id = values['agent_id']
     g.agent = Agent.objects.get(id=g.agent_id)
 
-@intent_apis.before_request
-def before_req():
-    g.user_id = "5bd1255f97d4030dfbf320e5"
-    g.user = User.objects.get(id=g.user_id)
-
 @intent_apis.route("/", methods=['GET', 'POST'])
+@auth_required
 def route_intent(agent_id):
     if request.method == 'GET':
         return list_intents()
@@ -38,6 +35,7 @@ def create_intent():
     return jsonify(intent)
 
 @intent_apis.route('/<intent_id>', methods=['GET', 'PUT', 'DELETE'])
+@auth_required
 def route_single_entity(agent_id, intent_id):
     intent = Intent.objects.get(id=intent_id)
     assert str(intent.agent.id) == agent_id

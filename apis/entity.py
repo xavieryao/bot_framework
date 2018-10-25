@@ -1,7 +1,7 @@
 from flask import Blueprint, request, g, jsonify
-from models.user import User
 from models.agent import Agent
 from models.entity import Entity, EntityEntry
+from .auth import auth_required
 
 entity_apis = Blueprint('entity_apis', __name__)
 
@@ -10,12 +10,8 @@ def get_agent(_, values):
     g.agent_id = values['agent_id']
     g.agent = Agent.objects.get(id=g.agent_id)
 
-@entity_apis.before_request
-def before_req():
-    g.user_id = "5bd1255f97d4030dfbf320e5"
-    g.user = User.objects.get(id=g.user_id)
-
 @entity_apis.route('/', methods=['GET', 'POST'])
+@auth_required
 def route_entity(agent_id):
     if request.method == 'GET':
         return list_entities()
@@ -23,6 +19,7 @@ def route_entity(agent_id):
         return create_entity()
 
 @entity_apis.route('/<entity_id>', methods=['GET', 'PUT', 'DELETE'])
+@auth_required
 def route_single_entity(agent_id, entity_id):
     entity = Entity.objects.get(id=entity_id)
     assert str(entity.agent.id) == agent_id
@@ -70,6 +67,7 @@ def delete_entity(entity):
     return 'done'
 
 @entity_apis.route('/<entity_id>/addEntry', methods=['POST'])
+@auth_required
 def add_entry(agent_id, entity_id):
     entity = Entity.objects.get(id=entity_id)
     assert str(entity.agent.id) == agent_id
@@ -81,6 +79,7 @@ def add_entry(agent_id, entity_id):
     return jsonify(entity.to_view())
 
 @entity_apis.route('/<entity_id>/uploadEntryList', methods=['POST'])
+@auth_required
 def upload_entry(agent_id, entity_id):
     entity = Entity.objects.get(id=entity_id)
     assert str(entity.agent.id) == agent_id

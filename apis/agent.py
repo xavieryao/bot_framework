@@ -5,11 +5,6 @@ from .auth import auth_required
 
 agent_apis = Blueprint('agent_apis', __name__)
 
-@agent_apis.before_request
-def before_req():
-    g.user_id = "5bd1255f97d4030dfbf320e5"
-    g.user = User.objects.get(id=g.user_id)
-
 @agent_apis.route('/', methods=['GET', 'POST'])
 @auth_required
 def route_agent():
@@ -32,6 +27,7 @@ def create_agent():
     return str(agent.id)
 
 @agent_apis.route('/<agent_id>', methods=['GET', 'PUT', 'DELETE'])
+@auth_required
 def route_agent_with_id(agent_id):
     agent = Agent.objects.get(id=agent_id)
     if request.method == 'GET':

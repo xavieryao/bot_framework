@@ -20,7 +20,7 @@ class UserSession(Document):
     }
 
     @classmethod
-    def generate_api_key(clz, n=64):
+    def generate_api_key(clz, n=48):
         k = []
         for _ in range(n):
             k.append(random.choice("1234567890abcdef"))

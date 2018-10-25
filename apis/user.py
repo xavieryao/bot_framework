@@ -8,11 +8,6 @@ from .auth import auth_required
 
 user_apis = Blueprint('user_apis', __name__)
 
-@user_apis.before_request
-def before_req():
-    g.user_id = "5bd1255f97d4030dfbf320e5"
-    g.user = User.objects.get(id=g.user_id)
-
 @user_apis.route('/', methods=['POST'])
 def create_user():
     user_obj = request.get_json()

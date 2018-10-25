@@ -1,9 +1,9 @@
 from flask import Blueprint, request, g, jsonify
-from models.user import User
 from models.agent import Agent
 from models.entity import Entity
 from models.intent import Intent
 from models.workflow import Workflow, Parameter, Context
+from .auth import auth_required
 
 workflow_apis = Blueprint('workflow_apis', __name__)
 
@@ -12,12 +12,8 @@ def get_agent(_, values):
     g.agent_id = values['agent_id']
     g.agent = Agent.objects.get(id=g.agent_id)
 
-@workflow_apis.before_request
-def before_req():
-    g.user_id = "5bd1255f97d4030dfbf320e5"
-    g.user = User.objects.get(id=g.user_id)
-
 @workflow_apis.route("/", methods=['GET', 'POST'])
+@auth_required
 def route_workflow(agent_id):
     if request.method == 'GET':
         return list_workflows()
@@ -69,6 +65,7 @@ def create_workflow():
     return jsonify(workflow)
 
 @workflow_apis.route('/<workflow_id>', methods=['GET', 'PUT', 'DELETE'])
+@auth_required
 def route_single_entity(agent_id, workflow_id):
     workflow = Workflow.objects.get(id=workflow_id)
     assert str(workflow.agent.id) == agent_id
