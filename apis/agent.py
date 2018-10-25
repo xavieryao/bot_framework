@@ -1,7 +1,7 @@
 from flask import Blueprint, request, g, jsonify
 from models.agent import Agent
-from models.user import User
 from .auth import auth_required
+from .error import api_success
 
 agent_apis = Blueprint('agent_apis', __name__)
 
@@ -24,7 +24,7 @@ def create_agent():
                   description=body.get('description', ''),
                   user=g.user,
                   webhook=body.get('webhook')).save()
-    return str(agent.id)
+    return jsonify(agent.to_view())
 
 @agent_apis.route('/<agent_id>', methods=['GET', 'PUT', 'DELETE'])
 @auth_required
@@ -50,8 +50,8 @@ def update_agent(agent):
     if 'webhook' in body:
         agent.webhook = body['webhook']
     agent.save()
-    return 'done'
+    return jsonify(agent.to_view())
 
 def delete_agent(agent):
     agent.delete()
-    return 'done'
+    return api_success('agent deleted')

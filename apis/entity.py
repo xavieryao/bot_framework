@@ -2,7 +2,7 @@ from flask import Blueprint, request, g, jsonify
 from models.agent import Agent
 from models.entity import Entity, EntityEntry
 from .auth import auth_required
-from .error import api_error
+from .error import api_error, api_success
 from mongoengine import DoesNotExist
 
 entity_apis = Blueprint('entity_apis', __name__)
@@ -51,7 +51,7 @@ def create_entity():
         entries=entries,
         agent=g.agent
     ).save()
-    return str(entity.id)
+    return jsonify(entity.to_view())
 
 def get_entity(entity):
     return jsonify(entity.to_view())
@@ -69,7 +69,7 @@ def update_entity(entity):
 
 def delete_entity(entity):
     entity.delete()
-    return 'done'
+    return api_success('deleted')
 
 @entity_apis.route('/<entity_id>/addEntry', methods=['POST'])
 @auth_required
@@ -95,4 +95,4 @@ def upload_entry(agent_id, entity_id):
     except (DoesNotExist, AssertionError):
         return api_error("not found", "invalid entity id"), 400
 
-    return api_error("not implemented", "this API hasn't been implemented"), 400
+    return api_error("not implemented", "this API hasn't been implemented"), 500

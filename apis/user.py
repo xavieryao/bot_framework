@@ -1,7 +1,7 @@
 from flask import Blueprint, request, g, jsonify
 from models.user import User
 from models.user_session import UserSession
-from .error import api_error
+from .error import api_error, api_success
 from mongoengine import DoesNotExist
 import datetime
 from .auth import auth_required
@@ -40,7 +40,7 @@ def update_user(user):
 
 def delete_user(user):
     user.delete()
-    return "done"
+    return api_success('done')
 
 @user_apis.route('/login', methods=['GET'])
 def login():
@@ -68,4 +68,4 @@ def login():
 @auth_required
 def logout():
     g.user_session.delete()
-    return 'done'
+    return api_success('done')

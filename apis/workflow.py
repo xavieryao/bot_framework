@@ -4,7 +4,7 @@ from models.entity import Entity
 from models.intent import Intent
 from models.workflow import Workflow, Parameter, Context
 from .auth import auth_required
-from .error import api_error
+from .error import api_error, api_success
 from mongoengine import DoesNotExist
 
 workflow_apis = Blueprint('workflow_apis', __name__)
@@ -148,4 +148,4 @@ def update_workflow(workflow):
 
 def delete_workflow(workflow):
     workflow.delete()
-    return 'done'
+    return api_success('done')

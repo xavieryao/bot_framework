@@ -3,7 +3,7 @@ from models.agent import Agent
 from models.intent import Intent
 from .auth import auth_required
 from mongoengine import DoesNotExist
-from .error import api_error
+from .error import api_error, api_success
 
 intent_apis = Blueprint('intent_apis', __name__)
 
@@ -65,4 +65,4 @@ def update_intent(intent):
 
 def delete_intent(intent):
     intent.delete()
-    return 'done'
+    return api_success('deleted')

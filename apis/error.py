@@ -5,3 +5,9 @@ def api_error(err_type, message):
         'type': err_type,
         'message': message
     })
+
+def api_success(message):
+    return jsonify({
+        'type': 'ok',
+        'message': message
+    })
