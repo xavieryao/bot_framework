@@ -1,7 +1,8 @@
-from flask import g, request, jsonify
+from flask import g, request
 from models.user_session import UserSession
 from mongoengine import DoesNotExist
 from .error import api_error
+from functools import wraps
 
 def verify_api_key():
     if 'api_key' not in request.args:
@@ -14,9 +15,11 @@ def verify_api_key():
     g.user_session = session
 
 def auth_required(func):
-    def err_func(*args, **kwargs):
-        return api_error('authentication', 'Authentication required. Supply api_key in query'), 403
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        if 'user_session' not in g:
+            return api_error('authentication', 'Authentication required. Supply api_key in query'), 403
+        else:
+            return func(*args, **kwargs)
 
-    if not g.user_session:
-        return err_func
-    return func
+    return decorated_function

@@ -4,6 +4,7 @@ from models.user_session import UserSession
 from .error import api_error
 from mongoengine import DoesNotExist
 import datetime
+from .auth import auth_required
 
 user_apis = Blueprint('user_apis', __name__)
 
@@ -19,6 +20,7 @@ def create_user():
     return jsonify(user.to_view())
 
 @user_apis.route('/<username>', methods=['GET', 'PUT', 'DELETE'])
+@auth_required
 def route_user(username):
     user = User.objects.get(username=username)
     assert user.id == g.user.id

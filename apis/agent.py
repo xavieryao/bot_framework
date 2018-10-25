@@ -1,6 +1,7 @@
 from flask import Blueprint, request, g, jsonify
 from models.agent import Agent
 from models.user import User
+from .auth import auth_required
 
 agent_apis = Blueprint('agent_apis', __name__)
 
@@ -10,6 +11,7 @@ def before_req():
     g.user = User.objects.get(id=g.user_id)
 
 @agent_apis.route('/', methods=['GET', 'POST'])
+@auth_required
 def route_agent():
     if request.method == 'GET':
         return list_all()
