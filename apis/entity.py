@@ -79,3 +79,10 @@ def add_entry(agent_id, entity_id):
     entity.entries.append(entry)
     entity.save()
     return jsonify(entity.to_view())
+
+@entity_apis.route('/<entity_id>/uploadEntryList', methods=['POST'])
+def upload_entry(agent_id, entity_id):
+    entity = Entity.objects.get(id=entity_id)
+    assert str(entity.agent.id) == agent_id
+
+    raise NotImplementedError
