@@ -22,6 +22,17 @@ def route_entity(agent_id):
     elif request.method == 'POST':
         return create_entity()
 
+@entity_apis.route('/<entity_id>', methods=['GET', 'PUT', 'DELETE'])
+def route_single_entity(agent_id, entity_id):
+    entity = Entity.objects.get(id=entity_id)
+    assert str(entity.agent.id) == agent_id
+    if request.method == 'GET':
+        return get_entity(entity)
+    elif request.method == 'PUT':
+        return update_entity(entity)
+    elif request.method == 'DELETE':
+        return delete_entity(entity)
+
 def list_entities():
     entities = Entity.objects(agent=g.agent)
     entities = [x.to_view() for x in entities]
@@ -39,3 +50,21 @@ def create_entity():
         agent=g.agent
     ).save()
     return str(entity.id)
+
+def get_entity(entity):
+    return jsonify(entity.to_view())
+
+def update_entity(entity):
+    body = request.get_json()
+    if 'name' in body:
+        entity.name = body['name']
+    if 'description' in body:
+        entity.description = body['description']
+    if 'entries' in body:
+        entity.entries = body['entries']
+    entity.save()
+    return jsonify(entity.to_view())
+
+def delete_entity(entity):
+    entity.delete()
+    return 'done'

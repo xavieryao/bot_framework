@@ -14,6 +14,8 @@ app.register_blueprint(entity_apis, url_prefix='/v1/agent/<agent_id>/entity/')
 app.register_blueprint(agent_apis, url_prefix='/v1/agent/')
 app.register_blueprint(user_apis, url_prefix='/v1/user/')
 
+print(app.url_map)
+
 @app.route('/')
 def hello_world():
     return 'Hello World!'
