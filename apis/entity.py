@@ -68,3 +68,14 @@ def update_entity(entity):
 def delete_entity(entity):
     entity.delete()
     return 'done'
+
+@entity_apis.route('/<entity_id>/addEntry', methods=['POST'])
+def add_entry(agent_id, entity_id):
+    entity = Entity.objects.get(id=entity_id)
+    assert str(entity.agent.id) == agent_id
+
+    body = request.get_json()
+    entry = EntityEntry(reference_value=body['reference_value'], alias=body['alias'])
+    entity.entries.append(entry)
+    entity.save()
+    return jsonify(entity.to_view())
