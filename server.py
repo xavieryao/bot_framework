@@ -9,6 +9,7 @@ app.config['MONGODB_SETTINGS'] = {
 
 db = MongoEngine(app)
 
+app.register_blueprint(apis.workflow_apis, url_prefix='/v1/agent/<agent_id>/workflow/')
 app.register_blueprint(apis.intent_apis, url_prefix='/v1/agent/<agent_id>/intent/')
 app.register_blueprint(apis.entity_apis, url_prefix='/v1/agent/<agent_id>/entity/')
 app.register_blueprint(apis.agent_apis, url_prefix='/v1/agent/')

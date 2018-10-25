@@ -27,3 +27,13 @@ class Workflow(Document):
     end_of_conversation = BooleanField(required=True, default=False)
     responses = ListField(StringField())
     enable_webhook = BooleanField(required=True, default=False)
+
+    def to_view(self):
+        obj = self.to_mongo()
+        obj['id'] = str(self.id)
+        obj['agent_id'] = str(self.agent.id)
+        obj['intent_id'] = str(self.intent.id)
+        del obj['_id']
+        del obj['agent']
+        del obj['intent']
+        return obj
