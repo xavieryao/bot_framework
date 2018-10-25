@@ -1,7 +1,14 @@
 from flask import Blueprint, request, g, jsonify
 from models.user import User
+from models.agent import Agent
+from models.entity import Entity, EntityEntry
 
 entity_apis = Blueprint('entity_apis', __name__)
+
+@entity_apis.url_value_preprocessor
+def get_agent(_, values):
+    g.agent_id = values['agent_id']
+    g.agent = Agent.objects.get(id=g.agent_id)
 
 @entity_apis.before_request
 def before_req():
@@ -9,5 +16,26 @@ def before_req():
     g.user = User.objects.get(id=g.user_id)
 
 @entity_apis.route('/', methods=['GET', 'POST'])
-def route_entity():
-    if request.method == 'GET'
+def route_entity(agent_id):
+    if request.method == 'GET':
+        return list_entities()
+    elif request.method == 'POST':
+        return create_entity()
+
+def list_entities():
+    entities = Entity.objects(agent=g.agent)
+    entities = [x.to_view() for x in entities]
+    return jsonify(entities)
+
+def create_entity():
+    body = request.get_json()
+    entries = []
+    for e in body['entries']:
+        entries.append(EntityEntry(reference_value=e['reference_value'], alias=e['alias']))
+    entity = Entity(
+        name=body['name'],
+        description=body.get('description', ''),
+        entries=entries,
+        agent=g.agent
+    ).save()
+    return str(entity.id)

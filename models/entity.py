@@ -12,3 +12,11 @@ class Entity(Document):
     description = StringField()
     entries = EmbeddedDocumentListField(EntityEntry, required=True)
     agent = LazyReferenceField(Agent, required=True)
+
+    def to_view(self):
+        obj = self.to_mongo()
+        obj['id'] = str(obj['id'])
+        obj['agent_id'] = str(self.agent.id)
+        del obj['_id']
+        del obj['agent']
+        return obj
