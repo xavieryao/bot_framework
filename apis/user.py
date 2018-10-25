@@ -58,7 +58,8 @@ def login():
         return api_error("authentication", "username/password incorrect or does not exist")
 
     session = UserSession(
-        user=user
+        user=user,
+        api_key=UserSession.generate_api_key()
     ).save()
 
     expire_after = session.created + datetime.timedelta(seconds=UserSession.EXPIRE_SECS)
@@ -67,3 +68,9 @@ def login():
         "rate_limit": 65535,
         "expires_after": expire_after.isoformat(timespec='milliseconds')
     })
+
+@user_apis.route('/logout', methods=['GET'])
+@auth_required
+def logout():
+    g.user_session.delete()
+    return 'done'
