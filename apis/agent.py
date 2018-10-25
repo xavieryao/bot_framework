@@ -10,7 +10,7 @@ def before_req():
     g.user = User.objects.get(id=g.user_id)
 
 @agent_apis.route('/', methods=['GET', 'POST'])
-def manage_agent():
+def route_agent():
     if request.method == 'GET':
         return list_all()
     elif request.method == 'POST':
@@ -31,20 +31,19 @@ def create_agent():
 
 @agent_apis.route('/<agent_id>', methods=['GET', 'PUT', 'DELETE'])
 def route_agent_with_id(agent_id):
-    if request.method == 'GET':
-        return get_agent(agent_id)
-    elif request.method == 'PUT':
-        return update_agent(agent_id)
-    elif request.method == 'DELETE':
-        return delete_agent(agent_id)
-
-def get_agent(agent_id):
     agent = Agent.objects.get(id=agent_id)
+    if request.method == 'GET':
+        return get_agent(agent)
+    elif request.method == 'PUT':
+        return update_agent(agent)
+    elif request.method == 'DELETE':
+        return delete_agent(agent)
+
+def get_agent(agent):
     agent = agent.to_view()
     return jsonify(agent)
 
-def update_agent(agent_id):
-    agent = Agent.objects.get(id=agent_id)
+def update_agent(agent):
     body = request.get_json()
     if 'name' in body:
         agent.name = body['name']
@@ -55,7 +54,6 @@ def update_agent(agent_id):
     agent.save()
     return 'done'
 
-def delete_agent(agent_id):
-    agent = Agent.objects.get(id=agent_id)
+def delete_agent(agent):
     agent.delete()
     return 'done'

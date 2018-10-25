@@ -1,6 +1,7 @@
 from flask import Flask
 from apis.agent import agent_apis
 from apis.user import user_apis
+from apis.entity import entity_apis
 from flask_mongoengine import MongoEngine
 
 app = Flask(__name__)
@@ -9,6 +10,7 @@ app.config['MONGODB_SETTINGS'] = {
 }
 
 db = MongoEngine(app)
+app.register_blueprint(entity_apis, url_prefix='/v1/agent/<agent_id>/entity/')
 app.register_blueprint(agent_apis, url_prefix='/v1/agent/')
 app.register_blueprint(user_apis, url_prefix='/v1/user/')
 
