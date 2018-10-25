@@ -1,8 +1,6 @@
 from flask import Blueprint, request, g, jsonify
-from bson import ObjectId
 from models.agent import Agent
 from models.user import User
-from response import make_response
 
 agent_apis = Blueprint('agent_apis', __name__)
 
@@ -19,10 +17,8 @@ def manage_agent():
         return create_agent()
 
 def list_all():
-    agents = Agent.objects(user__id=g.user_id)
-    for a in agents:
-        a['user_id'] = str(a['user']['_id'])
-        del a['user']
+    agents = Agent.objects(user=g.user)
+    agents = [x.to_view() for x in agents]
     return jsonify(agents)
 
 def create_agent():
@@ -33,6 +29,33 @@ def create_agent():
                   webhook=body.get('webhook')).save()
     return str(agent.id)
 
-@agent_apis.route('/register')
-def register():
-    return 'register'
+@agent_apis.route('/<agent_id>', methods=['GET', 'PUT', 'DELETE'])
+def route_agent_with_id(agent_id):
+    if request.method == 'GET':
+        return get_agent(agent_id)
+    elif request.method == 'PUT':
+        return update_agent(agent_id)
+    elif request.method == 'DELETE':
+        return delete_agent(agent_id)
+
+def get_agent(agent_id):
+    agent = Agent.objects.get(id=agent_id)
+    agent = agent.to_view()
+    return jsonify(agent)
+
+def update_agent(agent_id):
+    agent = Agent.objects.get(id=agent_id)
+    body = request.get_json()
+    if 'name' in body:
+        agent.name = body['name']
+    if 'description' in body:
+        agent.description = body['description']
+    if 'webhook' in body:
+        agent.webhook = body['webhook']
+    agent.save()
+    return 'done'
+
+def delete_agent(agent_id):
+    agent = Agent.objects.get(id=agent_id)
+    agent.delete()
+    return 'done'

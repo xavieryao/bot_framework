@@ -7,3 +7,11 @@ class Agent(Document):
     description = StringField()
     user = LazyReferenceField(User, required=True)
     webhook = StringField()
+
+    def to_view(self):
+        obj = self.to_mongo()
+        obj['id'] = str(self.id)
+        obj['user_id'] = str(self.user.id)
+        del obj['_id']
+        del obj['user']
+        return obj
