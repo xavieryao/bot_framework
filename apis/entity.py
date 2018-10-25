@@ -2,6 +2,8 @@ from flask import Blueprint, request, g, jsonify
 from models.agent import Agent
 from models.entity import Entity, EntityEntry
 from .auth import auth_required
+from .error import api_error
+from mongoengine import DoesNotExist
 
 entity_apis = Blueprint('entity_apis', __name__)
 
@@ -21,8 +23,11 @@ def route_entity(agent_id):
 @entity_apis.route('/<entity_id>', methods=['GET', 'PUT', 'DELETE'])
 @auth_required
 def route_single_entity(agent_id, entity_id):
-    entity = Entity.objects.get(id=entity_id)
-    assert str(entity.agent.id) == agent_id
+    try:
+        entity = Entity.objects.get(id=entity_id)
+        assert str(entity.agent.id) == agent_id
+    except (DoesNotExist, AssertionError):
+        return api_error("not found", "invalid entity id"), 400
     if request.method == 'GET':
         return get_entity(entity)
     elif request.method == 'PUT':
@@ -69,8 +74,11 @@ def delete_entity(entity):
 @entity_apis.route('/<entity_id>/addEntry', methods=['POST'])
 @auth_required
 def add_entry(agent_id, entity_id):
-    entity = Entity.objects.get(id=entity_id)
-    assert str(entity.agent.id) == agent_id
+    try:
+        entity = Entity.objects.get(id=entity_id)
+        assert str(entity.agent.id) == agent_id
+    except (DoesNotExist, AssertionError):
+        return api_error("not found", "invalid entity id"), 400
 
     body = request.get_json()
     entry = EntityEntry(reference_value=body['reference_value'], alias=body['alias'])
@@ -81,7 +89,10 @@ def add_entry(agent_id, entity_id):
 @entity_apis.route('/<entity_id>/uploadEntryList', methods=['POST'])
 @auth_required
 def upload_entry(agent_id, entity_id):
-    entity = Entity.objects.get(id=entity_id)
-    assert str(entity.agent.id) == agent_id
+    try:
+        entity = Entity.objects.get(id=entity_id)
+        assert str(entity.agent.id) == agent_id
+    except (DoesNotExist, AssertionError):
+        return api_error("not found", "invalid entity id"), 400
 
-    raise NotImplementedError
+    return api_error("not implemented", "this API hasn't been implemented"), 400

@@ -1,8 +1,9 @@
 from flask import Blueprint, request, g, jsonify
-from models.user import User
 from models.agent import Agent
 from models.intent import Intent
 from .auth import auth_required
+from mongoengine import DoesNotExist
+from .error import api_error
 
 intent_apis = Blueprint('intent_apis', __name__)
 
@@ -37,7 +38,10 @@ def create_intent():
 @intent_apis.route('/<intent_id>', methods=['GET', 'PUT', 'DELETE'])
 @auth_required
 def route_single_entity(agent_id, intent_id):
-    intent = Intent.objects.get(id=intent_id)
+    try:
+        intent = Intent.objects.get(id=intent_id)
+    except (DoesNotExist, AssertionError):
+        return api_error("not found", "invalid intent id"), 400
     assert str(intent.agent.id) == agent_id
     if request.method == 'GET':
         return get_intent(intent)

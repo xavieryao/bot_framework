@@ -4,6 +4,8 @@ from models.entity import Entity
 from models.intent import Intent
 from models.workflow import Workflow, Parameter, Context
 from .auth import auth_required
+from .error import api_error
+from mongoengine import DoesNotExist
 
 workflow_apis = Blueprint('workflow_apis', __name__)
 
@@ -38,8 +40,11 @@ def create_workflow():
 
     parameters = []
     for p in body.get('parameters', []):
-        entity = Entity.objects.get(id=p['entity_type_id'])
-        # TODO 404
+        try:
+            entity = Entity.objects.get(id=p['entity_type_id'])
+            assert entity.agent.id == g.agent.id
+        except (DoesNotExist, AssertionError):
+            return api_error("not found", "invalid entity id"), 400
 
         parameters.append(Parameter(
             name=p['name'],
@@ -49,7 +54,12 @@ def create_workflow():
             call_webhook=p.get('call_webhook', False)
         ))
 
-    intent = Intent.objects.get(id=body['intent_id'])
+    try:
+        intent = Intent.objects.get(id=body['intent_id'])
+        assert intent.agent.id == g.agent.id
+    except (AssertionError, DoesNotExist):
+        return api_error("not found", "invalid intent id"), 400
+
     workflow = Workflow(
         name=body['name'],
         description=body.get('description', ''),
@@ -67,8 +77,11 @@ def create_workflow():
 @workflow_apis.route('/<workflow_id>', methods=['GET', 'PUT', 'DELETE'])
 @auth_required
 def route_single_entity(agent_id, workflow_id):
-    workflow = Workflow.objects.get(id=workflow_id)
-    assert str(workflow.agent.id) == agent_id
+    try:
+        workflow = Workflow.objects.get(id=workflow_id)
+        assert str(workflow.agent.id) == agent_id
+    except (DoesNotExist, AssertionError):
+        return api_error("not found", "invalid workflow id"), 400
     if request.method == 'GET':
         return get_workflow(workflow)
     elif request.method == 'PUT':
@@ -84,8 +97,11 @@ def update_workflow(workflow):
     if 'parameters' in body:
         parameters = []
         for p in body['parameters']:
-            entity = Entity.objects.get(id=p['entity_type_id'])
-            # TODO 404
+            try:
+                entity = Entity.objects.get(id=p['entity_type_id'])
+                assert entity.agent.id == g.agent.id
+            except (DoesNotExist, AssertionError):
+                return api_error("not found", "invalid entity id"), 400
 
             parameters.append(Parameter(
                 name=p['name'],
@@ -109,8 +125,11 @@ def update_workflow(workflow):
         workflow.output_context = output_contexts
 
     if 'intent_id' in body:
-        intent = Intent.objects.get(id=body['intent_id'])
-        assert intent
+        try:
+            intent = Intent.objects.get(id=body['intent_id'])
+            assert intent.agent.id == g.agent.id
+        except (AssertionError, DoesNotExist):
+            return api_error("not found", "invalid intent id"), 400
         workflow.intent = intent
 
     if 'name' in body:
