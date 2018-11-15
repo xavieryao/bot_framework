@@ -52,7 +52,7 @@ def delete_user(user):
     user.delete()
     return api_success('done')
 
-@user_apis.route('/login', methods=['GET'])
+@user_apis.route('/login', methods=['POST'])
 def login():
     username = request.args['username']
     password = request.args['password']

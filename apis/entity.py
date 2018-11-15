@@ -1,6 +1,6 @@
 from flask import Blueprint, request, g, jsonify
 from models.agent import Agent
-from models.entity import Entity, EntityEntry
+from models.entity import Entity
 from .auth import auth_required
 from .error import api_error, api_success
 from mongoengine import DoesNotExist
@@ -44,7 +44,7 @@ def create_entity():
     body = request.get_json()
     entries = []
     for e in body['entries']:
-        entries.append(EntityEntry(reference_value=e['reference_value'], alias=e['alias']))
+        entries.append(e)
     entity = Entity(
         name=body['name'],
         description=body.get('description', ''),
@@ -71,20 +71,16 @@ def delete_entity(entity):
     entity.delete()
     return api_success('deleted')
 
-@entity_apis.route('/<entity_id>/addEntry', methods=['POST'])
+@entity_apis.route('/<entity_id>/listAll', methods=['GET'])
 @auth_required
-def add_entry(agent_id, entity_id):
+def list_all_entries(agent_id, entity_id):
     try:
         entity = Entity.objects.get(id=entity_id)
         assert str(entity.agent.id) == agent_id
     except (DoesNotExist, AssertionError):
         return api_error("not found", "invalid entity id"), 400
 
-    body = request.get_json()
-    entry = EntityEntry(reference_value=body['reference_value'], alias=body['alias'])
-    entity.entries.append(entry)
-    entity.save()
-    return jsonify(entity.to_view())
+    return jsonify(entity.entries_to_view())
 
 @entity_apis.route('/<entity_id>/uploadEntryList', methods=['POST'])
 @auth_required
