@@ -82,6 +82,37 @@ def list_all_entries(agent_id, entity_id):
 
     return jsonify(entity.entries_to_view())
 
+@entity_apis.route('/<entity_id>/addEntries', methods=['POST'])
+@auth_required
+def add_entries(agent_id, entity_id):
+    try:
+        entity = Entity.objects.get(id=entity_id)
+        assert str(entity.agent.id) == agent_id
+    except (DoesNotExist, AssertionError):
+        return api_error("not found", "invalid entity id"), 400
+
+    body = request.get_json()
+    entity.entries += body['entries']
+    entity.save()
+    return api_success("added")
+
+@entity_apis.route('/<entity_id>/deleteEntries', methods=['POST'])
+@auth_required
+def delete_entries(agent_id, entity_id):
+    try:
+        entity = Entity.objects.get(id=entity_id)
+        assert str(entity.agent.id) == agent_id
+    except (DoesNotExist, AssertionError):
+        return api_error("not found", "invalid entity id"), 400
+
+    body = request.get_json()
+    old_entries = set(entity.entries)
+    new_entries = set(body['entries'])
+
+    entity.entries = list(old_entries - new_entries)
+    entity.save()
+    return api_success("deleted")
+
 @entity_apis.route('/<entity_id>/uploadEntryList', methods=['POST'])
 @auth_required
 def upload_entry(agent_id, entity_id):
