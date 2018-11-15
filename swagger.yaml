@@ -213,7 +213,7 @@ paths:
             entries:
               type: "array"
               items:
-                $ref: '#/definitions/EntityEntry'
+                type: "string"
         
       responses:
         200:
@@ -324,12 +324,12 @@ paths:
             $ref: '#/definitions/ApiErrorResponse'            
       security:
       - api_key: []
-  /agent/{agent_id}/entity/{entity_id}/addEntry:
+  /agent/{agent_id}/entity/{entity_id}/addEntries:
     post:
       tags:
       - "entity"
-      summary: "Add an entry to the EntityType"
-      description: "Add an entry to the EntityType"
+      summary: "Add entries to the EntityType"
+      description: "Add entries to the EntityType"
       operationId: "addEntry"
       consumes:
       - "application/json"
@@ -348,10 +348,12 @@ paths:
         type: "string"
       - name: "body"
         in: "body"
-        description: "EntityEntry"
+        description: "Entries"
         required: true
         schema:
-          $ref: '#/definitions/EntityEntry'
+          type: "array"
+          items:
+            type: "string"
         
       responses:
         200:
@@ -364,15 +366,15 @@ paths:
             
       security:
       - api_key: []
-  /agent/{agent_id}/entity/{entity_id}/uploadEntryList:
+  /agent/{agent_id}/entity/{entity_id}/deleteEntries:
     post:
       tags:
       - "entity"
-      summary: "uploads a list of entries"
-      description: ""
-      operationId: "uploadEntryList"
+      summary: "Delete entries from the EntityType"
+      description: "Delete entries from the EntityType"
+      operationId: "deleteEntry"
       consumes:
-      - "multipart/form-data"
+      - "application/json"
       produces:
       - "application/json"
       parameters:
@@ -386,11 +388,15 @@ paths:
         description: "EntityType id"
         required: true
         type: "string"
-      - name: "file"
-        in: "formData"
-        description: "file to upload"
-        required: false
-        type: "file"
+      - name: "body"
+        in: "body"
+        description: "Entries"
+        required: true
+        schema:
+          type: "array"
+          items:
+            type: "string"
+        
       responses:
         200:
           description: "successful operation"
@@ -399,8 +405,10 @@ paths:
           description: "Client error"
           schema:
             $ref: '#/definitions/ApiErrorResponse'
+            
       security:
       - api_key: []
+     
   /agent/{agent_id}/intent:
     get:
       tags:
@@ -735,7 +743,7 @@ paths:
         default:
           description: "successful operation"
   /user/login:
-    get:
+    post:
       tags:
       - "user"
       summary: "Logs user into the system"
@@ -785,6 +793,8 @@ paths:
       responses:
         default:
           description: "successful operation"
+      security: 
+      - api_key: []
   /user/{username}:
     get:
       tags:
@@ -810,6 +820,8 @@ paths:
           description: "Invalid username supplied"
         404:
           description: "User not found"
+      security: 
+      - api_key: []
     put:
       tags:
       - "user"
@@ -836,6 +848,8 @@ paths:
           description: "Invalid user supplied"
         404:
           description: "User not found"
+      security: 
+      - api_key: []
     delete:
       tags:
       - "user"
@@ -856,6 +870,8 @@ paths:
           description: "Invalid username supplied"
         404:
           description: "User not found"
+      security: 
+      - api_key: []
 securityDefinitions:
   api_key:
     type: "apiKey"
@@ -890,16 +906,7 @@ definitions:
         type: "string"
       webhook:
         type: "string"
-  
-  EntityEntry:
-    type: "object"
-    properties:
-      reference_value:
-        type: "string"
-      alias:
-        type: "array"
-        items:
-          type: "string"
+
   
   EntityType:
     type: "object"
@@ -913,7 +920,7 @@ definitions:
       entries:
         type: "array"
         items:
-          $ref: "#/definitions/EntityEntry"
+          type: "string"
   
   Intent:
     type: "object"

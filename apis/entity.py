@@ -92,7 +92,9 @@ def add_entries(agent_id, entity_id):
         return api_error("not found", "invalid entity id"), 400
 
     body = request.get_json()
-    entity.entries += body['entries']
+    old_entries = set(entity.entries)
+    new_entries = set(body)
+    entity.entries = list(old_entries | new_entries)
     entity.save()
     return api_success("added")
 
@@ -107,7 +109,7 @@ def delete_entries(agent_id, entity_id):
 
     body = request.get_json()
     old_entries = set(entity.entries)
-    new_entries = set(body['entries'])
+    new_entries = set(body)
 
     entity.entries = list(old_entries - new_entries)
     entity.save()
