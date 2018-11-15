@@ -1,11 +1,17 @@
 from flask import Flask
 import apis
 from flask_mongoengine import MongoEngine
+import os
 
 app = Flask(__name__)
 app.config['MONGODB_SETTINGS'] = {
-    'db': 'bot_framework'
+    'db': 'bot_framework',
+    'host': os.environ['MONGO_SERVER'],
+    'port': int(os.environ['MONGO_PORT']),
+    'username': os.environ['MONGO_USERNAME'],
+    'password': os.environ['MONGO_PASSWORD']
 }
+
 app.config['DEBUG'] = True
 
 db = MongoEngine(app)
