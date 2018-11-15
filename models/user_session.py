@@ -16,7 +16,8 @@ class UserSession(Document):
                 'fields': ['created'],
                 'expireAfterSeconds': EXPIRE_SECS
             }
-        ]
+        ],
+        'collection': 'bot_usersession'
     }
 
     @classmethod

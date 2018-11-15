@@ -9,6 +9,10 @@ class Entity(Document):
     entries = ListField(StringField())
     agent = LazyReferenceField(Agent, required=True)
 
+    meta = {
+        'collection': 'bot_entity'
+    }
+
     def to_view(self):
         obj = self.to_mongo()
         obj['id'] = str(self.id)

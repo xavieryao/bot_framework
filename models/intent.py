@@ -12,6 +12,10 @@ class Intent(Document):
     tree = EmbeddedDocumentField(IntentTree)
     weight = FloatField(required=True)
 
+    meta = {
+        'collection': 'bot_intent'
+    }
+
     def to_view(self):
         obj = self.to_mongo()
         obj['id'] = str(self.id)

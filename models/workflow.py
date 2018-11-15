@@ -28,6 +28,10 @@ class Workflow(Document):
     responses = ListField(StringField())
     enable_webhook = BooleanField(required=True, default=False)
 
+    meta = {
+        'collection': 'bot_workflow'
+    }
+
     def to_view(self):
         obj = self.to_mongo()
         obj['id'] = str(self.id)
