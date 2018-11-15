@@ -54,8 +54,9 @@ def delete_user(user):
 
 @user_apis.route('/login', methods=['POST'])
 def login():
-    username = request.args['username']
-    password = request.args['password']
+    body = request.get_json()
+    username = body['username']
+    password = body['password']
     try:
         user = User.objects.get(username=username)
         assert user.password == hash_password(password)
