@@ -18,4 +18,8 @@ class Session(Document):
     contexts = EmbeddedDocumentListField(Context)
     start_time = DateTimeField(required=True, default=datetime.datetime.utcnow)
 
+    meta = {
+        'collection': 'bot_session'
+    }
+
     # TODO: session expire, use mongodb ttl

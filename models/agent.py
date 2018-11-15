@@ -8,6 +8,10 @@ class Agent(Document):
     user = LazyReferenceField(User, required=True)
     webhook = StringField()
 
+    meta = {
+        'collection': 'bot_agent'
+    }
+
     def to_view(self):
         obj = self.to_mongo()
         obj['id'] = str(self.id)

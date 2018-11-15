@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__)
 app.config['MONGODB_SETTINGS'] = {
-    'db': 'bot_framework',
+    'db': os.environ['MONGO_DBNAME'],
     'host': os.environ['MONGO_SERVER'],
     'port': int(os.environ['MONGO_PORT']),
     'username': os.environ['MONGO_USERNAME'],

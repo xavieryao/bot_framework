@@ -6,6 +6,10 @@ class User(Document):
     password = StringField(required=True)
     display_name = StringField()
 
+    meta = {
+        'collection': 'bot_user'
+    }
+
     def to_view(self):
         obj = self.to_mongo()
         obj['id'] = str(self.id)
