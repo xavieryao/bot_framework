@@ -1,5 +1,5 @@
 from mongoengine import Document, DynamicEmbeddedDocument
-from mongoengine import LazyReferenceField, StringField, EmbeddedDocumentField
+from mongoengine import LazyReferenceField, StringField, EmbeddedDocumentField, FloatField
 from .agent import Agent
 
 class IntentTree(DynamicEmbeddedDocument):
@@ -10,6 +10,7 @@ class Intent(Document):
     name = StringField(required=True)
     description = StringField(default="")
     tree = EmbeddedDocumentField(IntentTree)
+    weight = FloatField(required=True)
 
     def to_view(self):
         obj = self.to_mongo()

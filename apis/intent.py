@@ -31,7 +31,8 @@ def create_intent():
         name=body['name'],
         description=body.get('description', ''),
         agent=g.agent,
-        tree=body['tree']
+        tree=body['tree'],
+        weight=float(body['weight'])
     ).save()
     return jsonify(intent)
 
@@ -61,6 +62,8 @@ def update_intent(intent):
         intent.description = body['description']
     if 'tree' in body:
         intent.tree = body['tree']
+    if 'weight' in body:
+        intent.weight = float(body['weight'])
     return jsonify(intent.to_view())
 
 def delete_intent(intent):
