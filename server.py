@@ -26,8 +26,6 @@ app.register_blueprint(apis.entity_apis, url_prefix='/v1/agent/<agent_id>/entity
 app.register_blueprint(apis.agent_apis, url_prefix='/v1/agent/')
 app.register_blueprint(apis.user_apis, url_prefix='/v1/user/')
 
-app.before_request(apis.auth.verify_api_key)
-
 @app.route('/')
 def hello_world():
     return 'Hello World!'

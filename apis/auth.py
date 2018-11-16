@@ -18,6 +18,7 @@ def verify_api_key():
 def auth_required(func):
     @wraps(func)
     def decorated_function(*args, **kwargs):
+        verify_api_key()
         if 'user_session' not in g:
             return api_error('authentication', 'Authentication required. Supply api_key in query'), 403
         else:
