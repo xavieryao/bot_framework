@@ -16,6 +16,8 @@ app.config['MONGODB_SETTINGS'] = {
 app.config['DEBUG'] = True
 CORS(app)
 
+app.url_map.strcit_slashes = False
+
 db = MongoEngine(app)
 
 app.register_blueprint(apis.workflow_apis, url_prefix='/v1/agent/<agent_id>/workflow/')
