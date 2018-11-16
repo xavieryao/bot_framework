@@ -19,7 +19,6 @@ class Entity(Document):
         obj['agent_id'] = str(self.agent.id)
         del obj['_id']
         del obj['agent']
-        del obj['entries']
         return obj
 
     def entries_to_view(self):

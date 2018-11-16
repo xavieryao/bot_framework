@@ -38,6 +38,8 @@ def route_single_entity(agent_id, entity_id):
 def list_entities():
     entities = Entity.objects(agent=g.agent)
     entities = [x.to_view() for x in entities]
+    for x in entities:
+        del x['entries']
     return jsonify(entities)
 
 def create_entity():
