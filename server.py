@@ -16,7 +16,7 @@ app.config['MONGODB_SETTINGS'] = {
 app.config['DEBUG'] = True
 CORS(app)
 
-app.url_map.strcit_slashes = False
+app.url_map.strict_slashes = False
 
 db = MongoEngine(app)
 
