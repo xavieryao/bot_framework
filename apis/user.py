@@ -61,7 +61,7 @@ def login():
         user = User.objects.get(username=username)
         assert user.password == hash_password(password)
     except (AssertionError, DoesNotExist):
-        return api_error("authentication", "username/password incorrect or does not exist")
+        return api_error("authentication", "username/password incorrect or does not exist"), 400
 
     session = UserSession(
         user=user,

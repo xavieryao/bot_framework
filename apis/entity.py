@@ -9,12 +9,14 @@ entity_apis = Blueprint('entity_apis', __name__)
 
 @entity_apis.url_value_preprocessor
 def get_agent(_, values):
+    print('entity api called')
     g.agent_id = values['agent_id']
     g.agent = Agent.objects.get(id=g.agent_id)
 
 @entity_apis.route('/', methods=['GET', 'POST'])
 @auth_required
 def route_entity(agent_id):
+    print('route entity')
     if request.method == 'GET':
         return list_entities()
     elif request.method == 'POST':
