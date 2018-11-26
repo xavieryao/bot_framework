@@ -15,8 +15,9 @@ class Context(EmbeddedDocument):
 
 class Session(Document):
     agent = LazyReferenceField(Agent, required=True)
-    contexts = EmbeddedDocumentListField(Context)
+    contexts = EmbeddedDocumentListField(Context, default=[])
     start_time = DateTimeField(required=True, default=datetime.datetime.utcnow)
+    current_turn = IntField(required=True, default=0)
 
     meta = {
         'collection': 'bot_session'
