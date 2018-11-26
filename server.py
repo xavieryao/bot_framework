@@ -10,8 +10,8 @@ app.config['MONGODB_SETTINGS'] = {
     'db': os.environ['MONGO_DBNAME'],
     'host': os.environ['MONGO_SERVER'],
     'port': int(os.environ['MONGO_PORT']),
-    'username': os.environ['MONGO_USERNAME'],
-    'password': os.environ['MONGO_PASSWORD']
+    'username': os.environ.get('MONGO_USERNAME'),
+    'password': os.environ.get('MONGO_PASSWORD')
 }
 
 app.config['DEBUG'] = False
@@ -28,8 +28,10 @@ app.register_blueprint(apis.agent_apis, url_prefix='/v1/agent/')
 app.register_blueprint(apis.user_apis, url_prefix='/v1/user/')
 
 @app.errorhandler(500)
-def internal_error(err):
-    return api_error("internal error", "internal error"), 500
+def internal_error(err=None):
+    if err is None:
+        err = "oops, internal error"
+    return api_error("internal error", err), 500
 
 
 @app.route('/')
