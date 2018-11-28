@@ -11,7 +11,7 @@ conversation_apis = Blueprint('conversation_apis', __name__)
 def dummy_intent_prediction_and_ner(sentence):
     return 1, 2
 
-@conversation_apis.route('/', method='POST')
+@conversation_apis.route('/', methods=['POST'])
 def list_all():
     body = request.get_json()
     try:
