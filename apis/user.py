@@ -24,6 +24,17 @@ def create_user():
     ).save()
     return jsonify(user.to_view())
 
+@user_apis.route('/', methods=['GET', 'PUT'])
+@auth_required
+def route_user_this():
+    user = g.user
+    if request.method == 'GET':
+        return get_user(user)
+    elif request.method == 'PUT':
+        return update_user(user)
+    elif request.method == 'DELETE':
+        return delete_user(user)
+
 @user_apis.route('/<username>', methods=['GET', 'PUT', 'DELETE'])
 @auth_required
 def route_user(username):
