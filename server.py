@@ -26,6 +26,7 @@ app.register_blueprint(apis.intent_apis, url_prefix='/v1/agent/<agent_id>/intent
 app.register_blueprint(apis.entity_apis, url_prefix='/v1/agent/<agent_id>/entity/')
 app.register_blueprint(apis.agent_apis, url_prefix='/v1/agent/')
 app.register_blueprint(apis.user_apis, url_prefix='/v1/user/')
+app.register_blueprint(apis.conversation_apis, url_prefix='/v1/conversation/')
 
 @app.errorhandler(500)
 def internal_error(err):

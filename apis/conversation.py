@@ -11,7 +11,7 @@ conversation_apis = Blueprint('conversation_apis', __name__)
 def dummy_intent_prediction_and_ner(sentence):
     return 1, 2
 
-@conversation_apis.route('/query', method='POST')
+@conversation_apis.route('/', method='POST')
 def list_all():
     body = request.get_json()
     try:
@@ -44,6 +44,14 @@ def list_all():
             new_contexts.append(context)
     session.contexts = new_contexts
     session.save()
+
+    return jsonify({
+        "session_id": str(session.id),
+        "turn": current_turn,
+        "intent_id": "abcd",
+        "intent_name": "search scholar",
+        "reply": "I don't understand."
+    })
 
     current_context_names = set(x.name for x in new_contexts)
 
