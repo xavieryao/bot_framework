@@ -14,7 +14,7 @@ app.config['MONGODB_SETTINGS'] = {
     'password': os.environ.get('MONGO_PASSWORD')
 }
 
-app.config['DEBUG'] = False
+app.config['DEBUG'] = os.environ.get('DEBUG', False)
 CORS(app)
 
 app.url_map.strict_slashes = False
@@ -40,6 +40,12 @@ def hello_world():
 def make_500():
     raise ValueError
 
+@app.route('/test')
+def test():
+    from learnwares import sentence_simulator
+    sentence_simulator.test()
+    return 'done'
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8765)
+

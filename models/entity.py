@@ -19,7 +19,7 @@ class Entity(Document):
         obj['agent_id'] = str(self.agent.id)
         del obj['_id']
         del obj['agent']
-        return obj
+        return dict(obj)
 
     def entries_to_view(self):
         obj = self.to_mongo()
