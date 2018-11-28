@@ -1,23 +1,73 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from response import make_response
+from models.agent import Agent
+from models.session import Session
+from models.workflow import Workflow, Context
+from .error import api_error, api_success
+import random
 
 conversation_apis = Blueprint('conversation_apis', __name__)
 
+def dummy_intent_prediction_and_ner(sentence):
+    return 1, 2
+
 @conversation_apis.route('/query', method='POST')
 def list_all():
-    agent_id = request.args['agent']
-    session
-    entities = []
-    for entity in Entity.objects(agent_id=agent_id):
-        entity_dict = {
-            'name': entity.name,
-            'description': entity.description if entity.description else '',
-            'entries': []
-        }
-        for entry in entity.entries:
-            entity_dict['entries'].append({
-                'reference_value': entry.reference_value,
-                'alias': [str(x) for x in entry.alias]
-            })
-    return make_response({'entities': entities})
+    body = request.get_json()
+    try:
+        agent_id = body['agent_id']
+    except KeyError:
+        return api_error('missing params', 'agent_id is missing'), 400
+    try:
+        sentence = body['sentence']
+    except KeyError:
+        return api_error('missing params', 'sentence is missing'), 400
+    session_id = body.get('session_id')
 
+    agent = Agent.objects.get(id=agent_id)
+    if not agent:
+        return api_error('not found', 'Agent with agent_id does not exist.'), 400
+
+    if not session_id:
+        session = Session(agent=agent).save()
+    else:
+        session = Session.objects.get(id=session_id)
+        if not session:
+            return api_error('not found', 'Session with session_id does not exist.'), 400
+
+    current_turn = session.current_turn
+    session.current_turn += 1
+    new_contexts = []
+    for context in session.contexts:
+        if context.turns_to_expiry != 0:
+            context.turns_to_expiry -= 1
+            new_contexts.append(context)
+    session.contexts = new_contexts
+    session.save()
+
+    current_context_names = set(x.name for x in new_contexts)
+
+    intent, parameters = dummy_intent_prediction_and_ner(sentence)
+    matched_workflows = Workflow.objects(intent=intent)
+    workflow = None
+    for w in matched_workflows:
+        if all(c.name in current_context_names for c in w.input_context):
+            workflow = w
+            break
+
+    if not workflow:
+        return api_error('no workflow', 'No matched workflow.'), 400
+
+    for out_context in workflow.output_context:
+        session.contexts.append(Context(
+            name=out_context.name,
+            parameters=parameters,
+            turns_to_expiry=out_context.turns_to_expiry
+        ))
+        session.save()
+
+    responses = list(workflow.responses)
+    resp = random.choice(responses)
+    return jsonify({
+        "resp": resp
+    })
