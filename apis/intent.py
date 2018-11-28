@@ -64,6 +64,7 @@ def update_intent(intent):
         intent.tree = body['tree']
     if 'weight' in body:
         intent.weight = float(body['weight'])
+    intent.save()
     return jsonify(intent.to_view())
 
 def delete_intent(intent):
