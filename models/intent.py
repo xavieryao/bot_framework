@@ -1,5 +1,5 @@
 from mongoengine import Document, DynamicEmbeddedDocument, DynamicDocument
-from mongoengine import LazyReferenceField, StringField, EmbeddedDocumentField, FloatField
+from mongoengine import LazyReferenceField, StringField, EmbeddedDocumentField, FloatField, DictField
 from .agent import Agent
 
 
@@ -7,7 +7,7 @@ class Intent(Document):
     agent = LazyReferenceField(Agent, required=True)
     name = StringField(required=True)
     description = StringField(default="")
-    tree = DictField(IntentTree)
+    tree = DictField(required=True)
     weight = FloatField(required=True)
 
     meta = {
