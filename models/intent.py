@@ -1,15 +1,13 @@
-from mongoengine import Document, DynamicEmbeddedDocument
-from mongoengine import LazyReferenceField, StringField, EmbeddedDocumentField, FloatField
+from mongoengine import Document, DynamicEmbeddedDocument, DynamicDocument
+from mongoengine import LazyReferenceField, StringField, EmbeddedDocumentField, FloatField, DictField
 from .agent import Agent
 
-class IntentTree(DynamicEmbeddedDocument):
-    pass
 
 class Intent(Document):
     agent = LazyReferenceField(Agent, required=True)
     name = StringField(required=True)
     description = StringField(default="")
-    tree = EmbeddedDocumentField(IntentTree)
+    tree = DictField(required=True)
     weight = FloatField(required=True)
 
     meta = {

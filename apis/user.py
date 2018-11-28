@@ -70,6 +70,7 @@ def login():
 
     expire_after = session.created + datetime.timedelta(seconds=UserSession.EXPIRE_SECS)
     return jsonify({
+        "display_name": user.display_name,
         "api_key": session.api_key,
         "rate_limit": 65535,
         "expires_after": expire_after.isoformat(timespec='milliseconds')
