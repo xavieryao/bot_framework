@@ -29,7 +29,8 @@ app.register_blueprint(apis.user_apis, url_prefix='/v1/user/')
 
 @app.errorhandler(500)
 def internal_error(err):
-    return api_error("internal error", "internal error" + err), 500
+    print(str(err))
+    return api_error("internal error", "internal error {}".format(repr(err))), 500
 
 
 @app.route('/')
