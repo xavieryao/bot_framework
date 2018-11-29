@@ -20,6 +20,12 @@ def init_task(agent_id):
     train(agent)
 
 def train(agent):
+    data_path = "data/{}/data/".format(str(agent.id))
+    try:
+        os.makedirs(data_path)
+    except FileExistsError:
+        pass
+
     agent.training_state = "started"
     agent.save()
 

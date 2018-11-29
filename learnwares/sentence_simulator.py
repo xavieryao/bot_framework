@@ -7,7 +7,8 @@ import os
 
 class SentenceGenerator:
     SENTENCE_GENERATOR_PATH = '../sentence-simulator/main.py'
-    SENT_COUNT = 100
+    SENT_COUNT = 10000
+    NER_COUNT = 1000
 
     def __init__(self, agent):
         self.agent = agent
@@ -24,6 +25,7 @@ class SentenceGenerator:
         intents = Intent.objects(agent=self.agent)
         for intent in intents:
             intent_dict = dict(intent.tree)
+            intent_dict['name'] = intent_dict['id']
             rules['rule']['children'].append(intent_dict)
         entities = Entity.objects(agent=self.agent)
         for entity in entities:
@@ -46,6 +48,7 @@ class SentenceGenerator:
         rules_path = os.path.join(data_path, "sent_sim_rules.json")
         sent_path = os.path.join(data_path, "sents.txt")
         word_path = os.path.join(data_path, "words.txt")
+        map_path = os.path.join(data_path, "mapping.json")
 
         with open(rules_path, 'w') as f:
             json.dump(rules, f)
@@ -61,6 +64,22 @@ class SentenceGenerator:
             word_path,
             "-s",
             sent_path
+        ], stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        cp.check_returncode()
+        # generate less NER data
+        cp = subprocess.run([
+            "python3",
+            self.SENTENCE_GENERATOR_PATH,
+            "-f",
+            rules_path,
+            "-c",
+            str(self.NER_COUNT),
+            "-w",
+            word_path,
+            "-s",
+            sent_path + '.tmp',
+            "-m",
+            map_path
         ], stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         cp.check_returncode()
 
