@@ -3,8 +3,9 @@ import mongoengine
 import os
 import multiprocessing as mp
 from models.agent import Agent
+import subprocess
 
-
+CHATBOT_GENERATOR_PATH = '../Chatbot-generate/main.py'
 
 def init_task(agent_id):
     mongo_config = {
@@ -18,6 +19,17 @@ def init_task(agent_id):
 
     agent = Agent.objects.get(id=agent_id)
     train(agent)
+
+def train_chatbot(agent_id):
+    data_path = "data/{}/data/".format(agent_id)
+    cp = subprocess.run([
+        "python3",
+        CHATBOT_GENERATOR_PATH,
+        agent_id,
+        data_path + "words.txt",
+        data_path + "sents.txt.mapped"
+    ])
+    cp.check_returncode()
 
 def train(agent):
     data_path = "data/{}/data/".format(str(agent.id))
@@ -35,14 +47,23 @@ def train(agent):
         sent_simulator.generate_data()
     except Exception as e:
         print(e)
+        raise e
         agent.training_state = "failed at sent generate"
         print(agent.training_state)
         agent.save()
         return
-    agent.training_state = "sent generation done"
+    agent.training_state = "train classifier and ner"
     agent.save()
 
-    print("done")
+    try:
+        train_chatbot(str(agent.id))
+    except Exception as e:
+        print(e)
+        agent.training_state = "failed at NER/classify training"
+        print(agent.training_state)
+        agent.save()
+        return
+
     agent.training_state = "done"
     agent.save()
 
@@ -52,7 +73,7 @@ def start_training_process(agent):
 
 def test():
     from models.agent import Agent
-    for agent in Agent.objects:
-        print(agent.id)
-        start_training_process(agent)
+    agent =  list(Agent.objects)[-1]
+    print(agent.id)
+    start_training_process(agent)
 

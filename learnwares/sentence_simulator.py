@@ -25,7 +25,7 @@ class SentenceGenerator:
         intents = Intent.objects(agent=self.agent)
         for intent in intents:
             intent_dict = dict(intent.tree)
-            intent_dict['name'] = intent_dict['id']
+            intent_dict['name'] = str(intent.id)
             rules['rule']['children'].append(intent_dict)
         entities = Entity.objects(agent=self.agent)
         for entity in entities:
@@ -63,8 +63,10 @@ class SentenceGenerator:
             "-w",
             word_path,
             "-s",
-            sent_path
-        ], stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            sent_path,
+            "-m",
+            map_path
+        ]) #, stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         cp.check_returncode()
         # generate less NER data
         cp = subprocess.run([
@@ -80,7 +82,7 @@ class SentenceGenerator:
             sent_path + '.tmp',
             "-m",
             map_path
-        ], stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        ]) #, stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         cp.check_returncode()
 
 def test():
