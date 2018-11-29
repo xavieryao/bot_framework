@@ -11,7 +11,8 @@ app.config['MONGODB_SETTINGS'] = {
     'host': os.environ['MONGO_SERVER'],
     'port': int(os.environ['MONGO_PORT']),
     'username': os.environ.get('MONGO_USERNAME'),
-    'password': os.environ.get('MONGO_PASSWORD')
+    'password': os.environ.get('MONGO_PASSWORD'),
+    'connect': False
 }
 
 app.config['DEBUG'] = os.environ.get('DEBUG', False)
@@ -43,8 +44,8 @@ def make_500():
 
 @app.route('/test')
 def test():
-    from learnwares import sentence_simulator
-    sentence_simulator.test()
+    from learnwares import trainer
+    trainer.test()
     return 'done'
 
 if __name__ == '__main__':

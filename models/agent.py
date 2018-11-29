@@ -1,5 +1,5 @@
 from mongoengine import Document
-from mongoengine import StringField, LazyReferenceField
+from mongoengine import StringField, LazyReferenceField, DateTimeField
 from .user import User
 
 class Agent(Document):
@@ -7,6 +7,9 @@ class Agent(Document):
     description = StringField()
     user = LazyReferenceField(User, required=True)
     webhook = StringField()
+
+    training_state = StringField()
+    last_trained_time = DateTimeField()
 
     meta = {
         'collection': 'bot_agent'
