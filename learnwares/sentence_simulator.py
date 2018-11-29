@@ -6,7 +6,7 @@ import subprocess
 import os
 
 class SentenceGenerator:
-    SENTENCE_GENERATOR_PATH = '~/keg/sentence_simulator/main.py'
+    SENTENCE_GENERATOR_PATH = '../sentence-simulator/main.py'
     SENT_COUNT = 100
 
     def __init__(self, agent):
@@ -37,7 +37,10 @@ class SentenceGenerator:
 
     def generate_data(self):
         data_path = "data/{}/data/".format(self.agent.id)
-        os.makedirs(data_path)
+        try:
+            os.makedirs(data_path)
+        except FileExistsError:
+            pass
         rules = self.generate_rules()
 
         rules_path = os.path.join(data_path, "sent_sim_rules.json")
@@ -46,6 +49,7 @@ class SentenceGenerator:
 
         with open(rules_path, 'w') as f:
             json.dump(rules, f)
+
         cp = subprocess.run([
             "python3",
             self.SENTENCE_GENERATOR_PATH,
@@ -57,7 +61,7 @@ class SentenceGenerator:
             word_path,
             "-s",
             sent_path
-        ])
+        ], stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         cp.check_returncode()
 
 def test():
