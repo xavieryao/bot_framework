@@ -128,4 +128,13 @@ def upload_entry(agent_id, entity_id):
     except (DoesNotExist, AssertionError):
         return api_error("not found", "invalid entity id"), 400
 
-    return api_error("not implemented", "this API hasn't been implemented"), 500
+    if 'file' not in request.files:
+        return api_error("no file", "No file part")
+    file = request.files['file']
+    file_content = file.stream().read()
+    entity.entries_file.delete()
+    entity.entries_file.new_file()
+    entity.entries_file.write(file_content)
+    entity.entries_file.close()
+    entity.save()
+    return api_success("uploaded")

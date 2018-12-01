@@ -1,5 +1,6 @@
-from mongoengine import Document, EmbeddedDocument
-from mongoengine import StringField, EmbeddedDocumentListField, ListField, LazyReferenceField
+from mongoengine import Document
+from mongoengine import StringField, ListField, LazyReferenceField, FileField
+
 from .agent import Agent
 
 
@@ -7,6 +8,7 @@ class Entity(Document):
     name = StringField(required=True)
     description = StringField()
     entries = ListField(StringField())
+    entries_file = FileField(collection_name="bot_fs")
     agent = LazyReferenceField(Agent, required=True)
 
     meta = {
@@ -22,5 +24,8 @@ class Entity(Document):
         return dict(obj)
 
     def entries_to_view(self):
-        obj = self.to_mongo()
-        return obj['entries']
+        if len(self.entries) == 0:
+            entries = self.entries_file.read().decode("utf8").split("\n")
+            return entries
+        else:
+            return self.to_mongo()['entries']
