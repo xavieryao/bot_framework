@@ -5,6 +5,7 @@ from models.session import Session
 from models.workflow import Workflow, Context
 from .error import api_error, api_success
 import random
+import requests
 
 conversation_apis = Blueprint('conversation_apis', __name__)
 
@@ -45,12 +46,15 @@ def list_all():
     session.contexts = new_contexts
     session.save()
 
+    model_resp = requests.get("http://166.111.5.228:55014/query/{}/{}".format(agent_id, sentence)).json()
+
     return jsonify({
         "session_id": str(session.id),
         "turn": current_turn,
         "intent_id": "abcd",
         "intent_name": "search scholar",
-        "reply": "I don't understand."
+        "reply": "I don't understand.",
+        "intent": model_resp
     })
 
     current_context_names = set(x.name for x in new_contexts)
