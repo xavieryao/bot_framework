@@ -26,9 +26,9 @@ def train_chatbot(agent_id):
         "python3",
         CHATBOT_GENERATOR_PATH,
         agent_id,
-        data_path + "words.txt",
-        data_path + "sents.txt.mapped"
-    ])
+        '../bot_framework/' + data_path + "words.txt",
+        '../bot_framework/' + data_path + "sents.txt.mapped"
+    ], cwd='../Chatbot-generate')
     cp.check_returncode()
 
 def train(agent):
@@ -73,7 +73,6 @@ def start_training_process(agent):
 
 def test():
     from models.agent import Agent
-    agent =  list(Agent.objects)[-1]
-    print(agent.id)
+    agent = Agent.objects.get(id="5bfe0b04c4952f342f394a42")
     start_training_process(agent)
 
