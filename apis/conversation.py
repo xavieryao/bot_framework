@@ -49,14 +49,15 @@ def list_all():
 
     try:
         model_resp = requests.get("http://166.111.5.228:55014/query/{}/{}".format(agent_id, sentence)).json()
-        with open('data/{}/data/mapping.json', encoding="utf8") as f:
-            rev_mapping = json.load(f)
-            mapping = {}
-            for k, v in rev_mapping:
-                mapping[v] = k
-            model_resp['intent'] = mapping[model_resp['intent']]
     except:
         model_resp = {}
+    if 'intent' in model_resp:
+        with open('data/{}/data/mapping.json'.format(agent_id), encoding="utf8") as f:
+            rev_mapping = json.load(f)
+            mapping = {}
+            for k, v in rev_mapping.items():
+                mapping[v] = k
+            model_resp['intent'] = mapping[model_resp['intent']]
 
 
     return jsonify({
