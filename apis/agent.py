@@ -1,4 +1,5 @@
 from flask import Blueprint, request, g, jsonify
+from learnwares import trainer
 from models.agent import Agent
 from .auth import auth_required
 from .error import api_success
@@ -25,6 +26,13 @@ def create_agent():
                   user=g.user,
                   webhook=body.get('webhook')).save()
     return jsonify(agent.to_view())
+
+@agent_apis.route('/<agent_id>/train', methods=['GET'])
+@auth_required
+def train(agent_id):
+    agent = Agent.objects.get(id=agent_id)
+    trainer.start_training_process(agent)
+    api_success("started")
 
 @agent_apis.route('/<agent_id>', methods=['GET', 'PUT', 'DELETE'])
 @auth_required

@@ -12,11 +12,11 @@ mongo_settings = {
 
 mongoengine.connect(**mongo_settings)
 
-org_id = "5bfe0ef9c4952f342f394a44"
+org_id = "5bfe2702c4952fd462c4af3f"
 entity = Entity.objects.get(id=org_id)
 
 entity.entries_file.delete()
-with open("/Volumes/Untitled/etity/years.txt") as f:
+with open("data/file.txt") as f:
     cnt = f.read()
     entity.entries_file.new_file()
     entity.entries_file.write(cnt.encode("utf8"))
