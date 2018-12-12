@@ -42,6 +42,7 @@ def train(agent):
     agent.save()
 
     try:
+        print('start sent gen')
         sent_simulator = SentenceGenerator(agent)
         sent_simulator.generate_rules()
         sent_simulator.generate_data()

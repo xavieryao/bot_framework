@@ -19,13 +19,19 @@ class Entity(Document):
         obj = self.to_mongo()
         obj['id'] = str(self.id)
         obj['agent_id'] = str(self.agent.id)
+        obj['entries'] = self.entries_to_view()
+        if 'entries_file' in obj:
+            del obj['entries_file']
         del obj['_id']
         del obj['agent']
         return dict(obj)
 
     def entries_to_view(self):
         if len(self.entries) == 0:
-            entries = self.entries_file.read().decode("utf8").split("\n")
-            return entries
+            try:
+                entries = self.entries_file.read().decode("utf8").split("\n")
+                return entries
+            except:
+                return []
         else:
             return self.to_mongo()['entries']

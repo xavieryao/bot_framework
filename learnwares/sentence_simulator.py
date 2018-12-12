@@ -7,7 +7,7 @@ import os
 
 class SentenceGenerator:
     SENTENCE_GENERATOR_PATH = '../sentence-simulator/main.py'
-    SENT_COUNT = 10000
+    SENT_COUNT = 100000
     NER_COUNT = 1000
 
     def __init__(self, agent):
@@ -52,6 +52,7 @@ class SentenceGenerator:
 
         with open(rules_path, 'w') as f:
             json.dump(rules, f)
+        print('rules generated')
 
         cp = subprocess.run([
             "python3",
@@ -64,22 +65,6 @@ class SentenceGenerator:
             word_path,
             "-s",
             sent_path,
-            "-m",
-            map_path
-        ]) #, stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        cp.check_returncode()
-        # generate less NER data
-        cp = subprocess.run([
-            "python3",
-            self.SENTENCE_GENERATOR_PATH,
-            "-f",
-            rules_path,
-            "-c",
-            str(self.NER_COUNT),
-            "-w",
-            word_path,
-            "-s",
-            sent_path + '.tmp',
             "-m",
             map_path
         ]) #, stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
