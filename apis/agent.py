@@ -27,12 +27,12 @@ def create_agent():
                   webhook=body.get('webhook')).save()
     return jsonify(agent.to_view())
 
-@agent_apis.route('/<agent_id>/train', methods=['GET'])
+@agent_apis.route('/<agent_id>/train', methods=['POST'])
 @auth_required
 def train(agent_id):
     agent = Agent.objects.get(id=agent_id)
     trainer.start_training_process(agent)
-    api_success("started")
+    return api_success("started")
 
 @agent_apis.route('/<agent_id>', methods=['GET', 'PUT', 'DELETE'])
 @auth_required
