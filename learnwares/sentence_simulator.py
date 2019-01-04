@@ -13,6 +13,14 @@ class SentenceGenerator:
     def __init__(self, agent):
         self.agent = agent
 
+    @staticmethod
+    def change_dropout(node):
+        if node['type'] == 'exchangeable':
+            node['dropout'] = 0.2
+            print(node['name'])
+        for c in node.get('children', []):
+            SentenceGenerator.change_dropout(c)
+
 
     def generate_rules(self):
         rules = {
@@ -27,6 +35,7 @@ class SentenceGenerator:
             intent_dict = dict(intent.tree)
             intent_dict['name'] = str(intent.id)
             rules['rule']['children'].append(intent_dict)
+        self.change_dropout(rules['rule'])
         entities = Entity.objects(agent=self.agent)
         for entity in entities:
             entity_dict = entity.to_view()

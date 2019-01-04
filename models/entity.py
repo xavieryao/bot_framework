@@ -19,7 +19,7 @@ class Entity(Document):
         obj = self.to_mongo()
         obj['id'] = str(self.id)
         obj['agent_id'] = str(self.agent.id)
-        obj['entries'] = self.entries_to_view()
+        #obj['entries'] = self.entries_to_view()
         if 'entries_file' in obj:
             del obj['entries_file']
         del obj['_id']

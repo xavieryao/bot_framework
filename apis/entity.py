@@ -58,7 +58,9 @@ def create_entity():
     return jsonify(entity.to_view())
 
 def get_entity(entity):
-    return jsonify(entity.to_view())
+    entity_dict = entity.to_view()
+    entity_dict['entries'] = entity.entries_to_view()
+    return jsonify(entity_dict)
 
 def update_entity(entity):
     body = request.get_json()
