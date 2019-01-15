@@ -12,13 +12,16 @@ mongo_settings = {
 
 mongoengine.connect(**mongo_settings)
 
-org_id = "5bfe2702c4952fd462c4af3f"
-entity = Entity.objects.get(id=org_id)
+entity_id = "5bfe2702c4952fd462c4af3f"
+entity = Entity.objects.get(id=entity_id)
+limit = 5000
 
 entity.entries_file.delete()
 with open("data/file.txt") as f:
-    cnt = f.read()
     entity.entries_file.new_file()
-    entity.entries_file.write(cnt.encode("utf8"))
+    for line in f:
+        word, cnt = line[:-1].split('\t')
+        out = (word + '\n').encode('utf8')
+        entity.entries_file.write(out)
     entity.entries_file.close()
 entity.save()

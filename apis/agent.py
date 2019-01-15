@@ -6,6 +6,8 @@ from .error import api_success
 
 agent_apis = Blueprint('agent_apis', __name__)
 
+# FIXME bug: user not verified
+
 @agent_apis.route('/', methods=['GET', 'POST'])
 @auth_required
 def route_agent():
