@@ -45,7 +45,9 @@ def train(agent):
         print('start sent gen')
         sent_simulator = SentenceGenerator(agent)
         sent_simulator.generate_rules()
+        print('done generate rules')
         sent_simulator.generate_data()
+        print('done generate data')
     except Exception as e:
         print(e)
         raise e

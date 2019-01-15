@@ -8,7 +8,7 @@ import os
 class SentenceGenerator:
     SENTENCE_GENERATOR_PATH = '../sentence-simulator/main.py'
     SENT_COUNT = 100000
-    NER_COUNT = 1000
+    NER_COUNT =  100000
 
     def __init__(self, agent):
         self.agent = agent
@@ -41,7 +41,10 @@ class SentenceGenerator:
             entity_dict = entity.to_view()
             del entity_dict['description']
             del entity_dict['agent_id']
+            entity_dict['entries'] = entity.entries_to_view()
+            print(len(entity_dict['entries']))
             if len(entity_dict['entries']) == 0:
+                print('EMPTY')
                 entity_dict['entries'].append('PLACEHOLDER')
             rules['entity'].append(entity_dict)
         return rules
