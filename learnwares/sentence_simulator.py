@@ -7,19 +7,11 @@ import os
 
 class SentenceGenerator:
     SENTENCE_GENERATOR_PATH = '../sentence-simulator/main.py'
-    SENT_COUNT = 100000
-    NER_COUNT =  100000
+    SENT_COUNT = 1_000_000
+    NER_COUNT =  1_000_000
 
     def __init__(self, agent):
         self.agent = agent
-
-    @staticmethod
-    def change_dropout(node):
-        if node['type'] == 'exchangeable':
-            node['dropout'] = 0.2
-            print(node['name'])
-        for c in node.get('children', []):
-            SentenceGenerator.change_dropout(c)
 
 
     def generate_rules(self):
@@ -35,7 +27,6 @@ class SentenceGenerator:
             intent_dict = dict(intent.tree)
             intent_dict['name'] = str(intent.id)
             rules['rule']['children'].append(intent_dict)
-        self.change_dropout(rules['rule'])
         entities = Entity.objects(agent=self.agent)
         for entity in entities:
             entity_dict = entity.to_view()

@@ -1,6 +1,7 @@
 import mongoengine
 from models.entity import Entity
 import os
+from string import punctuation
 
 mongo_settings = {
     'db': os.environ['MONGO_DBNAME'],
@@ -12,16 +13,33 @@ mongo_settings = {
 
 mongoengine.connect(**mongo_settings)
 
-entity_id = "5bfe2702c4952fd462c4af3f"
-entity = Entity.objects.get(id=entity_id)
-limit = 5000
+def upload(entity_id, filename, limit):
+    entity = Entity.objects.get(id=entity_id)
 
-entity.entries_file.delete()
-with open("data/file.txt") as f:
+    try:
+        entity.entries_file.delete()
+    except:
+        pass
     entity.entries_file.new_file()
+    with open(filename, encoding='utf8') as f:
+        i = 0
+        for line in f:
+            try:
+                word, cnt = line[:-1].split('\t')
+                word = word.strip(punctuation)
+            except ValueError:
+                print(line)
+            if int(cnt) < limit:
+                break
+            out = (word + '\n').encode('utf8')
+            entity.entries_file.write(out)
+            i += 1
+        print(filename, i)
+        entity.entries_file.close()
+    entity.save()
+
+with open('input.txt') as f:
     for line in f:
-        word, cnt = line[:-1].split('\t')
-        out = (word + '\n').encode('utf8')
-        entity.entries_file.write(out)
-    entity.entries_file.close()
-entity.save()
+        eid, fn, cnt = line.strip().split()
+        cnt = int(cnt)
+        upload(eid, fn, cnt)

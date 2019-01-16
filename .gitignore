@@ -2,6 +2,7 @@ mongo.env
 *.env
 data/
 log/
+lexicons/
 # Created by https://www.gitignore.io/api/python,pycharm
 
 ### PyCharm ###

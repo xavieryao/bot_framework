@@ -1,4 +1,5 @@
 from .sentence_simulator import SentenceGenerator
+import datetime
 import mongoengine
 import os
 import multiprocessing as mp
@@ -38,7 +39,7 @@ def train(agent):
     except FileExistsError:
         pass
 
-    agent.training_state = "started"
+    agent.training_state = "started at " + str(datetime.datetime.now())
     agent.save()
 
     try:
@@ -55,7 +56,7 @@ def train(agent):
         print(agent.training_state)
         agent.save()
         return
-    agent.training_state = "train classifier and ner"
+    agent.training_state = "training models at " + str(datetime.datetime.now())
     agent.save()
 
     try:
@@ -67,7 +68,7 @@ def train(agent):
         agent.save()
         return
 
-    agent.training_state = "done"
+    agent.training_state = "done at " + str(datetime.datetime.now())
     agent.save()
 
 def start_training_process(agent):

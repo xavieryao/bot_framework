@@ -1,0 +1,10 @@
+5bfe111cc4952f342f394a45 lexicons/aminer_venues_zh.txt 10
+5c3d7d56c4952fa7a503edba lexicons/aminer_venues_en.txt 10
+5bfe127cc4952f342f394a47 lexicons/aminer_names_zh.txt 200
+5c3d7d40c4952fa7a503edb9 lexicons/aminer_names_en.txt 200
+5bfe132cc4952f342f394a48 lexicons/aminer_keywords_zh.txt 500
+5c3d7d22c4952fa7a503edb8 lexicons/aminer_keywords_en.txt 500
+5bfe137dc4952f342f394a49 lexicons/aminer_institutes_zh.txt 200
+5c3d7d0ec4952fa7a503edb7 lexicons/aminer_institutes_en.txt 200
+5bfe0ef9c4952f342f394a44 lexicons/years.txt 0
+5bfe2702c4952fd462c4af3f lexicons/files.txt 0
