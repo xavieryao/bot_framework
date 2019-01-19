@@ -2,7 +2,7 @@ from flask import Blueprint, request, g, jsonify
 from learnwares import trainer
 from models.agent import Agent
 from .auth import auth_required
-from .error import api_success
+from .error import api_success, api_error
 
 agent_apis = Blueprint('agent_apis', __name__)
 
@@ -33,6 +33,8 @@ def create_agent():
 @auth_required
 def train(agent_id):
     agent = Agent.objects.get(id=agent_id)
+    if agent.user.id != g.user.id:
+        return api_error("not found", "invalid agent id"), 400
     trainer.start_training_process(agent)
     return api_success("started")
 
@@ -40,6 +42,8 @@ def train(agent_id):
 @auth_required
 def route_agent_with_id(agent_id):
     agent = Agent.objects.get(id=agent_id)
+    if agent.user.id != g.user.id:
+        return api_error("not found", "invalid agent id"), 400
     if request.method == 'GET':
         return get_agent(agent)
     elif request.method == 'PUT':

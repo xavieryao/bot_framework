@@ -41,6 +41,8 @@ def create_intent():
 def route_single_entity(agent_id, intent_id):
     try:
         intent = Intent.objects.get(id=intent_id)
+        assert str(intent.agent.id) == agent_id
+        assert intent.agent.user.id == g.user.id
     except (DoesNotExist, AssertionError):
         return api_error("not found", "invalid intent id"), 400
     assert str(intent.agent.id) == agent_id
