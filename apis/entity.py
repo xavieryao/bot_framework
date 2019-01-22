@@ -28,7 +28,7 @@ def route_single_entity(agent_id, entity_id):
     try:
         entity = Entity.objects.get(id=entity_id)
         assert str(entity.agent.id) == agent_id
-        assert entity.agent.user.id == g.user.id
+        assert entity.agent.fetch().user.id == g.user.id
     except (DoesNotExist, AssertionError):
         return api_error("not found", "invalid entity id"), 400
     if request.method == 'GET':
@@ -84,7 +84,7 @@ def list_all_entries(agent_id, entity_id):
     try:
         entity = Entity.objects.get(id=entity_id)
         assert str(entity.agent.id) == agent_id
-        assert entity.agent.user.id == g.user.id
+        assert entity.agent.fetch().user.id == g.user.id
     except (DoesNotExist, AssertionError):
         return api_error("not found", "invalid entity id"), 400
 
@@ -96,7 +96,7 @@ def add_entries(agent_id, entity_id):
     try:
         entity = Entity.objects.get(id=entity_id)
         assert str(entity.agent.id) == agent_id
-        assert entity.agent.user.id == g.user.id
+        assert entity.agent.fetch().user.id == g.user.id
     except (DoesNotExist, AssertionError):
         return api_error("not found", "invalid entity id"), 400
 
@@ -113,7 +113,7 @@ def delete_entries(agent_id, entity_id):
     try:
         entity = Entity.objects.get(id=entity_id)
         assert str(entity.agent.id) == agent_id
-        assert entity.agent.user.id == g.user.id
+        assert entity.agent.fetch().user.id == g.user.id
     except (DoesNotExist, AssertionError):
         return api_error("not found", "invalid entity id"), 400
 
@@ -131,7 +131,7 @@ def upload_entry(agent_id, entity_id):
     try:
         entity = Entity.objects.get(id=entity_id)
         assert str(entity.agent.id) == agent_id
-        assert entity.agent.user.id == g.user.id
+        assert entity.agent.fetch().user.id == g.user.id
     except (DoesNotExist, AssertionError):
         return api_error("not found", "invalid entity id"), 400
 

@@ -57,7 +57,7 @@ class SentenceGenerator:
             json.dump(rules, f)
         print('rules generated')
 
-        cp = subprocess.run([
+        cmd = [
             "python3",
             self.SENTENCE_GENERATOR_PATH,
             "-f",
@@ -70,7 +70,9 @@ class SentenceGenerator:
             sent_path,
             "-m",
             map_path
-        ]) #, stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        ] #, stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print(cmd)
+        cp = subprocess.run(cmd)
         cp.check_returncode()
 
 def test():
